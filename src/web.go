@@ -130,15 +130,15 @@ func getChallengeFilesDirContentHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// convert content to json
-	json, error := json.MarshalIndent(contents, "", "  ")
+	// convert content to jsonData
+	jsonData, error := json.MarshalIndent(contents, "", "  ")
 	if error != nil {
 		log.Printf("Error converting directory contents to json (err): %s\n", error)
 		errorResponse(w, r, http.StatusInternalServerError, "Error converting directory contents to json")
 		return
 	}
 
-	if json == nil {
+	if jsonData == nil {
 		log.Printf("Error converting directory contents to json (json): %s\n", error)
 		errorResponse(w, r, http.StatusInternalServerError, "Error converting directory contents to json")
 		return
@@ -146,7 +146,7 @@ func getChallengeFilesDirContentHandler(w http.ResponseWriter, r *http.Request) 
 
 	// Print challenge in json
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "{\"files\":%s}\n", json)
+	fmt.Fprintf(w, "{\"files\":%s}\n", jsonData)
 }
 
 func getChallengeFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -308,13 +308,13 @@ func getCTFdChallengesHandler(w http.ResponseWriter, r *http.Request) {
 	// Print challenges in json
 	w.Header().Set("Content-Type", "application/json")
 
-	json, err := json.MarshalIndent(challenges, "", "  ")
+	jsonData, err := json.MarshalIndent(challenges, "", "  ")
 	if err != nil {
 		fmt.Fprintf(w, "{\"challenges\":[]}\n")
 		return // Error converting challenges to json
 	}
 
-	fmt.Fprintf(w, "{\"challenges\":%s}\n", string(json))
+	fmt.Fprintf(w, "{\"challenges\":%s}\n", string(jsonData))
 }
 
 func getCTFdUploadedChallengesHandler(w http.ResponseWriter, r *http.Request) {
@@ -335,11 +335,11 @@ func getCTFdUploadedChallengesHandler(w http.ResponseWriter, r *http.Request) {
 	// Print uploaded challenges in json
 	w.Header().Set("Content-Type", "application/json")
 
-	json, err := json.MarshalIndent(uploadedChallenges, "", "  ")
+	jsonData, err := json.MarshalIndent(uploadedChallenges, "", "  ")
 	if err != nil {
 		fmt.Fprintf(w, "{\"uploaded_challenges\":[]}\n")
 		return // Error converting challenges to json
 	}
 
-	fmt.Fprintf(w, "{\"uploaded_challenges\":%s}\n", string(json))
+	fmt.Fprintf(w, "{\"uploaded_challenges\":%s}\n", string(jsonData))
 }
