@@ -559,11 +559,10 @@ func updateOrCreateCTFdChallenge(challenge *ChallengeConfig) (int, error) {
 	}
 
 	// Check if challenge is uploaded
-	uploadedChallengeID, err := getUploadedCTFdChallenge(challenge.Challenge.Slug)
+	uploadedChallengeID, _ := getUploadedCTFdChallenge(challenge.Challenge.Slug)
 	// Ignore error for getting uploaded challenge, as it might indicate that it is not uploaded yet
 
 	id := 0
-	err = nil
 
 	if uploadedChallengeID == "" || uploadedChallengeID == "0" {
 		id, err = uploadCTFdChallenge(challenge, client)
