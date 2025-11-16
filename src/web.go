@@ -285,8 +285,8 @@ func postUploadChallengesHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Uploaded challenge %d", id)
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "{\"status\":\"ok\"}\n")
 }
 
