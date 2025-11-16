@@ -42,7 +42,7 @@ func validatePassword(password string) bool {
 	valid_password = stringStrip(valid_password)
 
 	// Compare the provided password with the valid password
-	equal := subtle.ConstantTimeCompare([]byte(password), []byte(valid_password)) == 0
+	equal := subtle.ConstantTimeCompare([]byte(password), []byte(valid_password)) == 1
 
 	return equal
 }
