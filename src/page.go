@@ -13,7 +13,7 @@ type Page struct {
 	Title        string `json:"title"`
 	Route        string `json:"route"`
 	AuthRequired bool   `json:"auth_required"`
-	Nonce        string `json:"nonce"` // Whether the page open in current tab or a new one
+	Nonce        string `json:"nonce"` // API Credentials (Should be obtained from CTFd)
 	Draft        bool   `json:"draft"`
 	Format       string `json:"format"`  // The format of the page, e.g., "markdown", "html"
 	Enabled      bool   `json:"enabled"` // Whether the page is enabled or not
