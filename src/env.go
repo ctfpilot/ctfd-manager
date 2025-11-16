@@ -3,13 +3,14 @@ package main
 import (
 	"os"
 	"strings"
+	"log"
 )
 
 func getPassword() string {
 	// Load data from env
 	password := strings.TrimSpace(os.Getenv("PASSWORD"))
 	if password == "" {
-		return "password"
+		log.Fatal("PASSWORD environment variable is not set")
 	}
 	return password
 }
