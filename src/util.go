@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/subtle"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -41,7 +42,7 @@ func validatePassword(password string) bool {
 	valid_password = stringStrip(valid_password)
 
 	// Compare the provided password with the valid password
-	equal := strings.Compare(password, valid_password) == 0
+	equal := subtle.ConstantTimeCompare([]byte(password), []byte(valid_password)) == 0
 
 	return equal
 }
