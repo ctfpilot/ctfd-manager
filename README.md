@@ -1,13 +1,8 @@
-# CTF Pilot's Template Repository
+# CTF Pilot's CTFd Manager
 
-## Template information
+CTF Pilot's CTFd Manager is a management API and orhestration tool for the CTFd.
 
-This repository, is a template repository for open-source projects within CTF Pilot.
-
-It provices a EUPL-1.2 License, release system and other standard files.
-
-Please remove this section, and replace with relevant information.  
-Replace `<repository-name>` with the repository name in `.github/workflows/cla-assistant.yml`and `.github/workflows/release.yml`.
+The tool contains a management API that allows for programmatic management of CTFd content, and a Kubernetes listener, that allows for continued deployment of CTFd content.
 
 ## Contributing
 
