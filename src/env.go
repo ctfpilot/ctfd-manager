@@ -37,7 +37,7 @@ func getGithubToken() string {
 	// Load data from env
 	github_token := strings.TrimSpace(os.Getenv("GITHUB_TOKEN"))
 	if github_token == "" {
-		return "github-token"
+		log.Fatal("GITHUB_TOKEN environment variable is not set")
 	}
 	return github_token
 }
@@ -46,7 +46,7 @@ func getGithubUser() string {
 	// Load data from env
 	github_user := strings.TrimSpace(os.Getenv("GITHUB_USER"))
 	if github_user == "" {
-		return "github-user"
+		log.Fatal("GITHUB_USER environment variable is not set")
 	}
 	return github_user
 }
@@ -55,7 +55,7 @@ func getGithubRepo() string {
 	// Load data from env
 	github_repo := strings.TrimSpace(os.Getenv("GITHUB_REPO"))
 	if github_repo == "" {
-		return "github-repo"
+		log.Fatal("GITHUB_REPO environment variable is not set")
 	}
 	return github_repo
 }
