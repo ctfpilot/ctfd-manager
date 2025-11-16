@@ -111,7 +111,7 @@ func validateCTFdSetupParams(params *CTFdSetupParams) error {
 		case "ScoreVisibility":
 			validValues = []string{"public", "private", "hidden", "admins"}
 		case "RegistrationVisibility":
-			validValues = []string{"public", "private", "Mmlc"}
+			validValues = []string{"public", "private", "mlc"}
 		default:
 			// No specific validation for other fields
 			selectCheck = false
