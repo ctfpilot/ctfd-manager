@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	HEALTH.Store(true)
+
 	http.HandleFunc("/", indexHandler)
 
 	http.HandleFunc("/api/challenges", getChallengesHandler)

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync/atomic"
 )
 
-var HEALTH = true
+var HEALTH atomic.Bool
 
 func setUnhealthy() {
-	HEALTH = false
+	HEALTH.Store(false)
 	log.Println("Service marked as unhealthy")
 }
 
@@ -55,7 +56,7 @@ func healthy() bool {
 		return false
 	}
 
-	if !HEALTH {
+	if !HEALTH.Load() {
 		log.Println("Service deemed unhealthy, due to manual unhealthy call")
 		return false
 	}
