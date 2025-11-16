@@ -34,7 +34,7 @@ func main() {
 	go func() {
 		err := initBackgroundChallengeWatcher()
 		if err != nil {
-			log.Fatalf("Error initializing background challenge watcher: %s", err)
+			log.Printf("Error initializing background challenge watcher: %s", err)
 			setUnhealthy()
 		}
 	}()
