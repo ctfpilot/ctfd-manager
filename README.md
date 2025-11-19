@@ -1,10 +1,10 @@
 # CTF Pilot's CTFd Manager
 
-CTF Pilot's CTFd Manager is a management API and orhestration tool for [CTFd](https://ctfd.io).
+CTF Pilot's CTFd Manager is a management API and orchestration tool for [CTFd](https://ctfd.io).
 
 The tool contains a management API that allows for programmatic management of CTFd content, and a Kubernetes listener, that allows for continued deployment of CTFd content.
 
-The tool listens for new content added as ConfigMaps in a designatet Kubernets namespaces, and automatically uploads them to the connected CTFd instance. When ConfigMaps are updated, the changes are automatically reflected in CTFd. When the ConfigMaps are deleted, the content will be hidden from CTFd, instead of being permanently deleted, allowing for recovery if needed.
+The tool listens for new content added as ConfigMaps in a designated Kubernetes namespace, and automatically uploads them to the connected CTFd instance. When ConfigMaps are updated, the changes are automatically reflected in CTFd. When the ConfigMaps are deleted, the content will be hidden from CTFd, instead of being permanently deleted, allowing for recovery if needed.
 
 > [!NOTE]
 > Currently, initial setup of CTFd, and continued deployment of challenges and pages is supported.
@@ -14,6 +14,29 @@ The tool listens for new content added as ConfigMaps in a designatet Kubernets n
 > Ensure to run the tool in a secure environment, and protect access to the management API.
 >
 > The tool is made to be non-destructive, but retain the needed permissions to change all content.
+
+## Table of Contents
+
+- [Supported Versions](#supported-versions)
+- [How to run](#how-to-run)
+- [API Reference](#api-reference)
+- [Operation guide](#operation-guide)
+- [Troubleshooting](#troubleshooting)
+- [Security Considerations](#security-considerations)
+- [Architecture](#architecture)
+- [Contributing](#contributing)
+- [License](#license)
+- [Code of Conduct](#code-of-conduct)
+
+## Supported Versions
+
+This CTFd Manager is tested and compatible with:
+
+- **CTFd**: 3.7.7 and later
+- **Kubernetes**: 1.32+
+- **Go**: 1.21+ (for development)
+
+While the manager may work with earlier and later versions, they are not officially supported or tested.
 
 ## How to run
 
@@ -52,7 +75,7 @@ In order for the application to run properly, the following ConfigMaps must be c
 ### Running the application
 
 > [!TIP]
-> Included in the repository is a sample Kubernetes deployment manifest, `k8s/example.yaml`, which can be used to deploy the application to a Kubernetes cluster.
+> Included in the repository is a sample Kubernetes deployment manifest, `k8s/example.yml`, which can be used to deploy the application to a Kubernetes cluster.
 
 > [!IMPORTANT]
 > Currently, the application has not been built to run with multiple replicas.  
@@ -399,7 +422,7 @@ kubectl create configmap mapping-map -n ctfd-manager \
 Apply the RBAC configuration from the example manifest:
 
 ```bash
-kubectl apply -f k8s/example-manager.yml
+kubectl apply -f k8s/example.yml
 ```
 
 Or create manually:
@@ -439,7 +462,7 @@ kubectl create secret generic ctfd-manager-secret -n ctfd-manager \
 Update the example manifest with your configuration and apply:
 
 ```bash
-kubectl apply -f k8s/example-manager.yml
+kubectl apply -f k8s/example.yml
 ```
 
 #### 5. Initialize CTFd
@@ -472,7 +495,7 @@ CTFd Manager is not concerned with how the ConfigMaps is managed in Kubernetes, 
 The CTFd manager will automatically pick up changes to the ConfigMaps and update CTFd accordingly.
 
 > [!NOTE]
-> Challenge and page ConfigMaps bust be located in the `NAMESPACE` that is configured for the manager to work with.
+> Challenge and page ConfigMaps must be located in the `NAMESPACE` that is configured for the manager to work with.
 
 #### Required ConfigMap Labels
 
