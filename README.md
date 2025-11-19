@@ -782,36 +782,61 @@ Never use personal access tokens with admin privileges or unnecessary scopes.
 
 ## Architecture
 
-The CTFd Manager acts as a bridge between three systems:
+The CTFd Manager orchestrates synchronization between Kubernetes, GitHub and the CTFd application. Below is an architecture diagram reflecting namespaces, required ConfigMaps, watched labels, and data flows.
 
-```text
-┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
-│   GitHub    │◄────────│   CTFd Manager   │────────►│    CTFd     │
-│ Repository  │         │   (Kubernetes)   │         │  Instance   │
-└─────────────┘         └──────────────────┘         └─────────────┘
-                               │      ▲
-                               │      │
-                               ▼      │
-                        ┌──────────────────┐
-                        │   Kubernetes     │
-                        │   ConfigMaps     │
-                        └──────────────────┘
+```mermaid
+flowchart LR
+  subgraph K8s["Kubernetes Namespace (NAMESPACE)"]
+    CM["Challenge ConfigMaps\nlabel: challenge-config"]
+    PM["Page ConfigMaps\nlabel: page-config"]
+    MM["mapping-map\n(category/difficulty mappings)"]
+    HS["challenge-configmap-hashset\n(stored hashes)"]
+    AT["ctfd-access-token\n(access_token)"]
+  end
+  GH[("GitHub Repository\nChallenge & Page File Content\n(description.md, handouts, assets)")]
+  M["CTFd Manager Pod"]
+  CTFD[("CTFd Instance")]
+
+  CM -->|watched label| M
+  PM -->|watched label| M
+  MM -->|read mappings| M
+  HS -->|read/write hashes| M
+  AT -->|read token| M
+  M -->|store token during setup| AT
+  M -->|fetch file contents| GH
+  M -->|upload/update challenges & pages| CTFD
+  M -->|setup (/api/ctfd/setup)| CTFD
+  CTFD -->|issue access token| M
+
+  classDef store fill:#f4f4f4,stroke:#777,stroke-width:1px;
+  class CM,PM,MM,HS,AT store;
 ```
+
+Key points:
+
+1. The manager watches only ConfigMaps in the namespace defined by the `NAMESPACE` environment variable (it may run in a different namespace if RBAC allows cross-namespace access).
+2. Only large files (handouts) are pulled from GitHub; metadata & schema JSON come from ConfigMaps.
+3. `challenge-configmap-hashset` prevents redundant uploads by tracking last applied hashes.
+4. `mapping-map` dynamically rewrites category/difficulty presentation.
+5. Access token is generated once at setup and persisted in `ctfd-access-token`.
+6. Pages are created/updated or deleted based on presence/removal of page ConfigMaps.
 
 **Components**:
 
-1. **GitHub Repository**: Source of truth for challenge definitions and files
-2. **Kubernetes ConfigMaps**: State storage for uploaded challenges and CTFd configuration
-3. **CTFd Instance**: Target platform where challenges are deployed
-4. **CTFd Manager**: Orchestration service that syncs between all systems
+1. **GitHub Repository**: Stores large challenge files (e.g., handouts) referenced by ConfigMaps.
+2. **Kubernetes ConfigMaps**: Provide structured metadata & schema JSON for challenges/pages plus auxiliary state (mappings, hashes, token).
+3. **CTFd Instance**: Receives created/updated challenges & pages via Manager API calls; issues access token during setup.
+4. **CTFd Manager Pod**: Watches labeled ConfigMaps, fetches GitHub file content, applies mappings, manages lifecycle & synchronization.
 
 **Data Flow**:
 
-1. Manager watches for ConfigMaps with challenge configurations in Kubernetes
-2. When changes are detected, fetches challenge files from GitHub
-3. Processes challenges and uploads to CTFd via REST API
-4. Stores CTFd challenge IDs in ConfigMaps for tracking
-5. Maintains hashset of uploaded content to detect changes
+1. Watcher detects add/update/delete of labeled ConfigMaps (`challenge-config`, `page-config`).
+2. Manager reads schema JSON + metadata from ConfigMap; pulls referenced files from GitHub repo/branch using configured token.
+3. Applies category/difficulty mapping from `mapping-map` and determines effective category.
+4. Creates or updates challenge/page in CTFd via authenticated REST calls (using stored access token).
+5. Stores resulting CTFd IDs in `ctfd-challenges` / `ctfd-pages` ConfigMaps and updates hash in `challenge-configmap-hashset`.
+6. On ConfigMap deletion: challenge is disabled (not hard-deleted) or page removed in CTFd; hash cleared.
+7. Setup endpoint initializes platform, generates access token, writes it to `ctfd-access-token`.
 
 ## Contributing
 
