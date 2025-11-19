@@ -835,15 +835,15 @@ graph TB
     mgr -->|"setup"| ctfd
     ctfd -.->|"issue token"| mgr
     
-    style k8s fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    style mgr fill:#fff3e0,stroke:#f57c00,stroke-width:3px
-    style gh fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    style ctfd fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-    style cm fill:#fff,stroke:#666,stroke-width:1px
-    style pm fill:#fff,stroke:#666,stroke-width:1px
-    style mm fill:#fff,stroke:#666,stroke-width:1px
-    style hs fill:#fff,stroke:#666,stroke-width:1px
-    style at fill:#fff,stroke:#666,stroke-width:1px
+    style k8s fill:#2d3748,stroke:#4299e1,stroke-width:2px
+    style mgr fill:#744210,stroke:#f6ad55,stroke-width:3px
+    style gh fill:#553c9a,stroke:#9f7aea,stroke-width:2px
+    style ctfd fill:#276749,stroke:#48bb78,stroke-width:2px
+    style cm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style pm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style mm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style hs fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style at fill:#1a202c,stroke:#a0aec0,stroke-width:1px
 ```
 
 Key points:
