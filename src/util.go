@@ -26,7 +26,9 @@ func errorResponse(w http.ResponseWriter, r *http.Request, status int, message s
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(jsonResponse)
+	if _, err := w.Write(jsonResponse); err != nil {
+		log.Printf("Error writing response: %s", err)
+	}
 }
 
 func stringStrip(str string) string {

@@ -8,6 +8,18 @@ import (
 	"net/http"
 )
 
+// ---------
+// Formats
+// ---------
+
+type ChallengesResponse struct {
+    Challenges []map[string]string `json:"challenges"`
+}
+
+// ---------
+// Challenges
+// ---------
+
 func middleware(w http.ResponseWriter, r *http.Request) error {
 	// Check if the request is authenticated
 	bearerToken := r.Header.Get("Authorization")
@@ -52,17 +64,13 @@ func getChallengesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Print challenges in json
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "{\"challenges\":[")
-	for i, config := range challenges {
-		if i != 0 {
-			fmt.Fprintf(w, ",")
-		}
-
-		// Print challenge as json
-		fmt.Fprintf(w, "{\"name\":\"%s\"}", config)
+	challengeList := make([]map[string]string, len(challenges))
+	for i, challenge := range challenges {
+		challengeList[i] = map[string]string{"name": challenge}
 	}
-	fmt.Fprintf(w, "]}\n")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(ChallengesResponse{Challenges: challengeList})
 }
 
 func getChallengeHandler(w http.ResponseWriter, r *http.Request) {
@@ -226,7 +234,9 @@ func getChallengeFileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename="+file)
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(bytes)))
 	w.WriteHeader(http.StatusOK)
-	w.Write(bytes)
+	if _, err := w.Write(bytes); err != nil {
+		log.Printf("Error writing file response: %s", err)
+	}
 	log.Printf("File %s sent successfully", file)
 }
 

@@ -512,5 +512,7 @@ func postSetupCTFd(w http.ResponseWriter, r *http.Request) {
 	// Respond with success
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("{\"status\":\"success\"}"))
+	if _, err := w.Write([]byte("{\"status\":\"success\"}")); err != nil {
+		log.Printf("Error writing response: %s", err)
+	}
 }
