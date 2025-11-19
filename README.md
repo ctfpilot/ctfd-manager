@@ -4,7 +4,7 @@ CTF Pilot's CTFd Manager is a management API and orhestration tool for [CTFd](ht
 
 The tool contains a management API that allows for programmatic management of CTFd content, and a Kubernetes listener, that allows for continued deployment of CTFd content.
 
-The tool listens for new content added as ConfigMaps in designet Kubernets namespaces, and automatically uploads them to the connected CTFd instance. When ConfigMaps are updated, the changes are automatically reflected in CTFd. When the ConfigMaps are deleted, the content will be hidden from CTFd, instead of being permanently deleted, allowing for recovery if needed.
+The tool listens for new content added as ConfigMaps in a designatet Kubernets namespaces, and automatically uploads them to the connected CTFd instance. When ConfigMaps are updated, the changes are automatically reflected in CTFd. When the ConfigMaps are deleted, the content will be hidden from CTFd, instead of being permanently deleted, allowing for recovery if needed.
 
 > [!NOTE]
 > Currently, initial setup of CTFd, and continued deployment of challenges and pages is supported.
@@ -44,6 +44,10 @@ In order for the application to run properly, the following ConfigMaps must be c
 - `ctfd-pages`: Will store the uploaded pages to CTFd. The manager will automatically create and update this ConfigMap when pages are uploaded through the service.
 - `challenge-configmap-hashset`: Will store a hashset of uploaded challenges and pages, in order to track changes. The manager will automatically create and update this ConfigMap when challenges or pages are uploaded through the service.
 - `mapping-map`: Should store a mapping of category and difficulty slugs to category names. Will be used to dynamically change the "category" field in challenges. See the [Category and Difficulty Mapping](#category-and-difficulty-mapping) section for more information.
+
+> [!NOTE]
+> **Namespace Requirement:**  
+> All challenge and page ConfigMaps, as well as required configuration, **must be located in the namespace specified by the `NAMESPACE` environment variable** for the manager. The manager can run in a different namespace, but will only watch and manage resources in the namespace defined by `NAMESPACE`. Ensure your service account and RBAC permissions allow access to this namespace.
 
 ### Running the application
 
@@ -456,6 +460,94 @@ curl -X POST -H "Authorization: Bearer <your-password>" \
 ```
 
 Challenges added to Kubernetes, will now be automatically synchronized to CTFd.
+
+### Challenge and Page ConfigMap Format
+
+CTFd Manager loads challenge and page definitions from Kubernetes ConfigMaps. These must follow strict formats based on the CTF Pilot schemas:
+
+- **Challenges:** [CTF Pilot's Challenge Schema](https://github.com/ctfpilot/challenge-schema) (JSON)
+- **Pages:** [CTF Pilot's Page Schema](https://github.com/ctfpilot/page-schema) (JSON)
+
+CTFd Manager is not concerned with how the ConfigMaps is managed in Kubernetes, as long as they follow the required format.  
+The CTFd manager will automatically pick up changes to the ConfigMaps and update CTFd accordingly.
+
+> [!NOTE]
+> Challenge and page ConfigMaps bust be located in the `NAMESPACE` that is configured for the manager to work with.
+
+#### Required ConfigMap Labels
+
+| Type      | Label Key                          | Label Value        |
+| --------- | ---------------------------------- | ------------------ |
+| Challenge | `challenges.kube-ctf.io/configmap` | `challenge-config` |
+| Page      | `challenges.kube-ctf.io/configmap` | `page-config`      |
+
+**These labels are required for the manager to recognize and process the ConfigMap.**
+
+#### Challenge ConfigMap Data Fields
+
+| Field          | Required | Description                                     |
+| -------------- | -------- | ----------------------------------------------- |
+| `name`         | Yes      | Unique name for the challenge                   |
+| `path`         | Yes      | Path to challenge files in the repository       |
+| `repository`   | Yes      | GitHub repository for challenge files           |
+| `challenge`    | Yes      | JSON object matching the Challenge Schema       |
+| `description`  | Yes      | Short description of the challenge              |
+| `generated_at` | Yes      | ISO8601 timestamp when the config was generated |
+
+#### Page ConfigMap Data Fields
+
+| Field          | Required | Description                                     |
+| -------------- | -------- | ----------------------------------------------- |
+| `slug`         | Yes      | Unique slug for the page                        |
+| `name`         | Yes      | Name of the page                                |
+| `path`         | Yes      | Path to page files in the repository            |
+| `repository`   | Yes      | GitHub repository for page files                |
+| `page`         | Yes      | JSON object matching the Page Schema            |
+| `description`  | Yes      | Short description of the page                   |
+| `generated_at` | Yes      | ISO8601 timestamp when the config was generated |
+
+#### Example Challenge ConfigMap
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-challenge-1
+  namespace: ctfd-manager
+  labels:
+    challenges.kube-ctf.io/configmap: challenge-config
+
+data:
+  name: "web-challenge-1"
+  path: "web/web-challenge-1"
+  repository: "ctfpilot/ctfd-challenges"
+  challenge: |
+    { ...Challenge Schema JSON... }
+  description: "This is a web challenge focused on XSS vulnerabilities."
+  generated_at: "2025-11-19T12:00:00Z"
+```
+
+#### Example Page ConfigMap
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rules-page
+  namespace: ctfd-manager
+  labels:
+    challenges.kube-ctf.io/configmap: page-config
+
+data:
+  slug: "rules"
+  name: "Rules Page"
+  path: "pages/rules"
+  repository: "ctfpilot/ctfd-pages"
+  page: |
+    { ...Page Schema JSON... }
+  description: "Competition rules and guidelines."
+  generated_at: "2025-11-19T12:00:00Z"
+```
 
 ### Category and Difficulty Mapping
 
