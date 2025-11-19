@@ -179,7 +179,7 @@ curl -X POST -H "Authorization: Bearer <password>" \
 
 The setup endpoint accepts a JSON body with the following parameters:
 
-#### Required Parameters
+##### Required Parameters
 
 | Parameter                 | Type    | Description                                                              | Example                              |
 | ------------------------- | ------- | ------------------------------------------------------------------------ | ------------------------------------ |
@@ -196,20 +196,20 @@ The setup endpoint accepts a JSON body with the following parameters:
 | `email`                   | string  | Admin user's email                                                       | `"admin@example.com"`                |
 | `password`                | string  | Admin user's password                                                    | `"SecurePassword123!"`               |
 
-#### Optional Time Parameters
+##### Optional Time Parameters
 
 | Parameter | Type   | Description                     | Example        |
 | --------- | ------ | ------------------------------- | -------------- |
 | `start`   | string | CTF start time (Unix timestamp) | `"1700000000"` |
 | `end`     | string | CTF end time (Unix timestamp)   | `"1700086400"` |
 
-#### Optional Team Parameters
+##### Optional Team Parameters
 
 | Parameter   | Type    | Description                                              | Example |
 | ----------- | ------- | -------------------------------------------------------- | ------- |
 | `team_size` | integer | Maximum team size (required if `user_mode` is `"teams"`) | `4`     |
 
-#### Optional Bracket Parameters
+##### Optional Bracket Parameters
 
 | Parameter  | Type  | Description                         |
 | ---------- | ----- | ----------------------------------- |
@@ -229,7 +229,7 @@ The setup endpoint accepts a JSON body with the following parameters:
 - `description` (string, optional): Bracket description (max 255 chars)
 - `type` (string, optional): Bracket type - empty string, `"users"`, or `"teams"`
 
-#### Optional Theme Parameters
+##### Optional Theme Parameters
 
 | Parameter       | Type   | Description            | Example                                         |
 | --------------- | ------ | ---------------------- | ----------------------------------------------- |
@@ -250,7 +250,7 @@ The setup endpoint accepts a JSON body with the following parameters:
 - `name` (string): Filename with extension
 - `content` (string): Base64-encoded file content
 
-#### Optional Mail Server Parameters
+##### Optional Mail Server Parameters
 
 | Parameter       | Type    | Description                | Example                 |
 | --------------- | ------- | -------------------------- | ----------------------- |
@@ -262,13 +262,13 @@ The setup endpoint accepts a JSON body with the following parameters:
 | `mail_tls`      | boolean | Use TLS for SMTP           | `true`                  |
 | `mail_from`     | string  | Sender email address       | `"noreply@example.com"` |
 
-#### Optional Registration Parameters
+##### Optional Registration Parameters
 
 | Parameter           | Type   | Description                    | Example        |
 | ------------------- | ------ | ------------------------------ | -------------- |
 | `registration_code` | string | Code required for registration | `"SECRET2025"` |
 
-#### Example Complete Setup Request
+##### Example Complete Setup Request
 
 ```json
 {
@@ -311,7 +311,7 @@ The setup endpoint accepts a JSON body with the following parameters:
 }
 ```
 
-#### Example Minimal Setup Request
+##### Example Minimal Setup Request
 
 ```json
 {
