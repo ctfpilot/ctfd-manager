@@ -808,31 +808,42 @@ Never use personal access tokens with admin privileges or unnecessary scopes.
 The CTFd Manager orchestrates synchronization between Kubernetes, GitHub and the CTFd application. Below is an architecture diagram reflecting namespaces, required ConfigMaps, watched labels, and data flows.
 
 ```mermaid
-flowchart LR
-  subgraph K8s["Kubernetes Namespace (NAMESPACE)"]
-    CM["Challenge ConfigMaps\nlabel: challenge-config"]
-    PM["Page ConfigMaps\nlabel: page-config"]
-    MM["mapping-map\n(category/difficulty mappings)"]
-    HS["challenge-configmap-hashset\n(stored hashes)"]
-    AT["ctfd-access-token\n(access_token)"]
-  end
-  GH[("GitHub Repository\nChallenge & Page File Content\n(description.md, handouts, assets)")]
-  M["CTFd Manager Pod"]
-  CTFD[("CTFd Instance")]
-
-  CM -->|watched label| M
-  PM -->|watched label| M
-  MM -->|read mappings| M
-  HS -->|read/write hashes| M
-  AT -->|read token| M
-  M -->|store token during setup| AT
-  M -->|fetch file contents| GH
-  M -->|upload/update challenges & pages| CTFD
-  M -->|setup (/api/ctfd/setup)| CTFD
-  CTFD -->|issue access token| M
-
-  classDef store fill:#f4f4f4,stroke:#777,stroke-width:1px;
-  class CM,PM,MM,HS,AT store;
+graph TB
+    subgraph k8s["Kubernetes Namespace (NAMESPACE)"]
+        direction TB
+        cm["Challenge ConfigMaps<br/><small>label: challenge-config</small>"]
+        pm["Page ConfigMaps<br/><small>label: page-config</small>"]
+        mm["mapping-map<br/><small>category/difficulty mappings</small>"]
+        hs["challenge-configmap-hashset<br/><small>stored hashes</small>"]
+        at["ctfd-access-token<br/><small>access_token</small>"]
+    end
+    
+    gh[("GitHub Repository<br/><small>Challenge Files</small><br/><small>Page Files</small>")]
+    mgr["CTFd Manager Pod<br/><small>API + Watcher</small>"]
+    ctfd[("CTFd Instance<br/><small>Web Application</small>")]
+    
+    cm -->|"watch"| mgr
+    pm -->|"watch"| mgr
+    mm -->|"read"| mgr
+    hs <-->|"read/write"| mgr
+    at -->|"read"| mgr
+    mgr -->|"store token"| at
+    
+    mgr -->|"fetch files"| gh
+    
+    mgr -->|"create/update<br/>challenges & pages"| ctfd
+    mgr -->|"setup"| ctfd
+    ctfd -.->|"issue token"| mgr
+    
+    style k8s fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style mgr fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    style gh fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style ctfd fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style cm fill:#fff,stroke:#666,stroke-width:1px
+    style pm fill:#fff,stroke:#666,stroke-width:1px
+    style mm fill:#fff,stroke:#666,stroke-width:1px
+    style hs fill:#fff,stroke:#666,stroke-width:1px
+    style at fill:#fff,stroke:#666,stroke-width:1px
 ```
 
 Key points:
