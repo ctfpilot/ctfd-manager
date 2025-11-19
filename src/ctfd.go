@@ -164,7 +164,6 @@ func validateCTFdSetupParams(params *CTFdSetupParams) error {
 			if bracket.Name == "" {
 				return errors.New("bracket name cannot be empty")
 			}
-			bracket.Name = strings.TrimSpace(bracket.Name)
 			if bracket.Type != "" && bracket.Type != "users" && bracket.Type != "teams" {
 				return errors.New("invalid bracket type: " + bracket.Type + ", valid values are: \"\", \"users\", \"teams\"")
 			}
@@ -272,9 +271,9 @@ func setupCTFdBrackets(client *ctfd.Client, params *CTFdSetupParams) error {
 	for _, bracket := range params.Brackets {
 		if returnedBracket, err := client.PostBrackets(&ctfd.PostBracketsParams{
 			ID:          0,
-			Name:        bracket.Name,
-			Description: bracket.Description,
-			Type:        bracket.Type,
+			Name:        strings.TrimSpace(bracket.Name),
+			Description: strings.TrimSpace(bracket.Description),
+			Type:        strings.TrimSpace(bracket.Type),
 		}); err != nil {
 			return errors.New("error setting up CTFd bracket '" + bracket.Name + "': " + err.Error())
 		} else {
