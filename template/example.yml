@@ -4,7 +4,7 @@
 # Role, RoleBinding, Secrets, ConfigMaps, Deployment, and Service.
 # However, you may need to customize certain values (like GitHub token,
 # repository, branch, and CTFd URL) to fit your specific use case.
-# You will also need to add a ingress or similar resource to expose the service.
+# You will also need to add an ingress or similar resource to expose the service.
 
 apiVersion: v1
 kind: Namespace
@@ -131,7 +131,7 @@ metadata:
     ctfpilot.com/component: ctfd-manager
 ---
 apiVersion: v1
-kind: SecConfigMapret
+kind: ConfigMap
 metadata:
   name: mapping-map
   namespace: ctfd-manager
