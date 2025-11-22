@@ -1,0 +1,252 @@
+# Example CTFd Manager Kubernetes Manifest
+# This manifest sets up the necessary Kubernetes resources to deploy
+# the CTFd Manager application, including Namespace, ServiceAccount,
+# Role, RoleBinding, Secrets, ConfigMaps, Deployment, and Service.
+# However, you may need to customize certain values (like GitHub token,
+# repository, branch, and CTFd URL) to fit your specific use case.
+# You will also need to add a ingress or similar resource to expose the service.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ctfd-manager
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ctfd-manager
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ctfd-manager
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ctfd-manager
+subjects:
+  - kind: ServiceAccount
+    name: ctfd-manager
+    namespace: ctfd-manager
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ctfd-manager-secret
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+data:
+  # TODO: Replace <base64_encoded_github_token> and <password> with actual base64 encoded values
+  github-token: <base64_encoded_github_token>
+  password: <password>
+type: Opaque
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "ctfd-access-token"
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ctfd-challenges
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ctfd-pages
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: challenge-configmap-hashset
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+---
+apiVersion: v1
+kind: SecConfigMapret
+metadata:
+  name: mapping-map
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+data:
+  categories: |
+    {
+      "web"        : "Web",
+      "forensics"  : "Forensics",
+      "rev"        : "Reverse Engineering",
+      "crypto"     : "Crypto",
+      "pwn"        : "Pwn",
+      "boot2root"  : "Boot2Root",
+      "osint"      : "OSINT",
+      "misc"       : "Misc",
+      "blockchain" : "Blockchain",
+      "mobile"     : "Mobile"
+    }
+  difficulties: |
+    {
+      "beginner"    : "Beginner",
+      "easy"        : "Easy",
+      "easy-medium" : "Easy - Medium",
+      "medium"      : "Medium",
+      "medium-hard" : "Medium - Hard",
+      "hard"        : "Hard",
+      "very-hard"   : "Very Hard",
+      "insane"      : "Insane"
+    }
+  difficulty-categories: |
+    {
+      "beginner" : "Beginner"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctfd-manager
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ctfpilot.com/component: ctfd-manager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: ctfpilot
+        app.kubernetes.io/name: ctfd-manager
+        app.kubernetes.io/version: { .Version }
+        app.kubernetes.io/component: ctfd-manager
+        ctfpilot.com/component: ctfd-manager
+    spec:
+      serviceAccountName: ctfd-manager
+      containers:
+        - name: ctfd-manager
+          image: ghcr.io/ctfpilot/ctfd-manager:{ .Version }
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: api
+          env:
+            - name: NAMESPACE
+              value: ctfd-manager
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ctfd-manager-secret
+                  key: password
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ctfd-manager-secret
+                  key: github-token
+            - name: GITHUB_REPO
+              value: ctfpilot/example-challenges
+            - name: GITHUB_BRANCH
+              value: main
+            - name: CTFD_URL
+              value: "https://<ctfd-instance-url>"
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "10m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctfd-manager
+  namespace: ctfd-manager
+  labels:
+    app.kubernetes.io/part-of: ctfpilot
+    app.kubernetes.io/name: ctfd-manager
+    app.kubernetes.io/version: { .Version }
+    app.kubernetes.io/component: ctfd-manager
+    ctfpilot.com/component: ctfd-manager
+spec:
+  type: NodePort
+  ports:
+    - name: api
+      port: 80
+      targetPort: api
+  selector:
+    ctfpilot.com/component: ctfd-manager
