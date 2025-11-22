@@ -99,7 +99,7 @@ The application needs the following configuration through environment variables:
   **This should be a strong password, as it will give admin access to the CTFd instance and all challenge information.**
   *Example: `SuperSecretPassword123!`*
 - `NAMESPACE`: The Kubernetes namespace the application is running in.  
-  *Example: `ctfd`*
+  *Example: `ctfd-manager`*
 - `GITHUB_REPO`: The GitHub repository to use for challenge files.  
   *Example: `ctfpilot/ctfd-challenges`*
 - `GITHUB_BRANCH`: The GitHub branch to use for challenge files.  
