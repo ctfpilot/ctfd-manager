@@ -104,6 +104,8 @@ The application needs the following configuration through environment variables:
   *Example: `ctfpilot/ctfd-challenges`*
 - `GITHUB_BRANCH`: The GitHub branch to use for challenge files.  
   *Example: `main` or `develop`*
+- `GITHUB_USER`: The GitHub username to use for accessing the challenge files repository.  
+  *Example: `ctfpilot`*
 - `GITHUB_TOKEN`: The GitHub access token to use for accessing the challenge files repository.  
   *Example: `ghp_XXXXXXXXXXXXXXXXXXXX`*
 
