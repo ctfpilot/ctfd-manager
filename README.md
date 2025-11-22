@@ -558,31 +558,31 @@ metadata:
 data:
   categories: | 
     {
-      "web"        = "Web",
-      "forensics"  = "Forensics",
-      "rev"        = "Reverse Engineering",
-      "crypto"     = "Crypto",
-      "pwn"        = "Pwn",
-      "boot2root"  = "Boot2Root",
-      "osint"      = "OSINT",
-      "misc"       = "Misc",
-      "blockchain" = "Blockchain",
-      "mobile"     = "Mobile"
+      "web"        : "Web",
+      "forensics"  : "Forensics",
+      "rev"        : "Reverse Engineering",
+      "crypto"     : "Crypto",
+      "pwn"        : "Pwn",
+      "boot2root"  : "Boot2Root",
+      "osint"      : "OSINT",
+      "misc"       : "Misc",
+      "blockchain" : "Blockchain",
+      "mobile"     : "Mobile"
     }
   difficulties: |
     {
-      "beginner"    = "Beginner",
-      "easy"        = "Easy",
-      "easy-medium" = "Easy - Medium",
-      "medium"      = "Medium",
-      "medium-hard" = "Medium - Hard",
-      "hard"        = "Hard",
-      "very-hard"   = "Very Hard",
-      "insane"      = "Insane"
+      "beginner"    : "Beginner",
+      "easy"        : "Easy",
+      "easy-medium" : "Easy - Medium",
+      "medium"      : "Medium",
+      "medium-hard" : "Medium - Hard",
+      "hard"        : "Hard",
+      "very-hard"   : "Very Hard",
+      "insane"      : "Insane"
     }
   difficulty-categories: |
     {
-      "beginner" = "Beginner"
+      "beginner" : "Beginner"
     }
 ```
 
