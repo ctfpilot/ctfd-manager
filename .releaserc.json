@@ -1,0 +1,47 @@
+{
+    "branches": [
+        "main",
+        {
+            "name": "develop",
+            "prerelease": "r"
+        }
+    ],
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits"
+            }
+        ],
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits"
+            }
+        ],
+        [
+            "@semantic-release/github",
+            {
+                "successComment": false,
+                "assets": [
+                ]
+            }
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "echo ${nextRelease.version} > version.txt && cp template/example.yml k8s/example.yml && sed -i 's/{ .Version }/${nextRelease.version}/g' k8s/example.yml",
+                "publishCmd": "echo 'Published version ${nextRelease.version}'"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "k8s/example.yml"
+                ],
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ]
+    ]
+}
