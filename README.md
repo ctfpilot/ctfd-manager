@@ -596,6 +596,13 @@ The token must be added under the key `access_token`.
 For existing challenges and pages, these can be added to their appropriate ConfigMaps (`ctfd-challenges` and `ctfd-pages`) in order for the manager to manage them.  
 They are added in the format of: `<challenge-or-page-slug>: <ctfd-id>`.
 
+For example, to add an existing challenge with slug `web-challenge-1` and CTFd ID `5`, you would run:
+
+```bash
+kubectl patch configmap ctfd-challenges -n <namespace> \
+  --type merge -p '{"data":{"web-challenge-1":"5"}}'
+```
+
 ### Health checks
 
 In order to ensure the application is running correctly, it exposes two health check endpoints, which provides the same information: `status` and `/api/status`.  
