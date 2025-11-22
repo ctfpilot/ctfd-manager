@@ -32,7 +32,7 @@ The tool listens for new content added as ConfigMaps in a designated Kubernetes 
 
 This CTFd Manager is tested and compatible with:
 
-- **CTFd**: 3.7.7 and later
+- **CTFd**: 3.7.7
 - **Kubernetes**: 1.32+
 - **Go**: 1.21+ (for development)
 
