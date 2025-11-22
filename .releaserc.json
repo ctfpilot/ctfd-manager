@@ -38,7 +38,7 @@
             "@semantic-release/git",
             {
                 "assets": [
-                    "k8s/k8s.yml"
+                    "k8s/example.yml"
                 ],
                 "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
             }
