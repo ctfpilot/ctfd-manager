@@ -805,38 +805,53 @@ The CTFd Manager orchestrates synchronization between Kubernetes, GitHub and the
 graph TB
     subgraph k8s["Kubernetes Namespace (NAMESPACE)"]
         direction TB
-        cm["Challenge ConfigMaps<br/><small>label: challenge-config</small>"]
-        pm["Page ConfigMaps<br/><small>label: page-config</small>"]
+        subgraph watched["Watched ConfigMaps"]
+            cm["Challenge ConfigMaps<br/><small>label: challenge-config</small>"]
+            pm["Page ConfigMaps<br/><small>label: page-config</small>"]
+        end
+        subgraph state["State ConfigMaps"]
+            at["ctfd-access-token<br/><small>stores API token</small>"]
+            hs["challenge-configmap-hashset<br/><small>tracks changes</small>"]
+            cc["ctfd-challenges<br/><small>CTFd challenge IDs</small>"]
+            cp["ctfd-pages<br/><small>CTFd page IDs</small>"]
+        end
         mm["mapping-map<br/><small>category/difficulty mappings</small>"]
-        hs["challenge-configmap-hashset<br/><small>stored hashes</small>"]
-        at["ctfd-access-token<br/><small>access_token</small>"]
     end
     
-    gh[("GitHub Repository<br/><small>Challenge Files</small><br/><small>Page Files</small>")]
-    mgr["CTFd Manager Pod<br/><small>API + Watcher</small>"]
-    ctfd[("CTFd Instance<br/><small>Web Application</small>")]
+    gh[("GitHub Repository<br/><small>GITHUB_REPO/GITHUB_BRANCH</small>")]
+    mgr["CTFd Manager Pod<br/><small>API Server + Watcher</small>"]
+    ctfd[("CTFd Instance<br/><small>CTFD_URL</small>")]
+    api["API Clients<br/><small>Bearer auth with PASSWORD</small>"]
     
-    cm -->|"watch"| mgr
-    pm -->|"watch"| mgr
-    mm -->|"read"| mgr
-    hs <-->|"read/write"| mgr
-    at -->|"read"| mgr
-    mgr -->|"store token"| at
+    cm -->|"watch events"| mgr
+    pm -->|"watch events"| mgr
+    mm -->|"read mappings"| mgr
+    hs <-->|"read/write hashes"| mgr
+    cc <-->|"read/write IDs"| mgr
+    cp <-->|"read/write IDs"| mgr
+    at <-->|"read/write token"| mgr
     
-    mgr -->|"fetch files"| gh
+    mgr -->|"fetch challenge files<br/>(GITHUB_TOKEN)"| gh
     
     mgr -->|"create/update<br/>challenges & pages"| ctfd
-    mgr -->|"setup"| ctfd
-    ctfd -.->|"issue token"| mgr
+    mgr -->|"initial setup<br/>(one-time)"| ctfd
+    ctfd -.->|"return API token"| mgr
+    
+    api -->|"POST /api/ctfd/setup<br/>POST /api/ctfd/challenges/init<br/>GET /api/*"| mgr
     
     style k8s fill:#2d3748,stroke:#4299e1,stroke-width:2px
+    style watched fill:#1a365d,stroke:#3182ce,stroke-width:1px,stroke-dasharray: 5 5
+    style state fill:#1a202c,stroke:#718096,stroke-width:1px,stroke-dasharray: 5 5
     style mgr fill:#744210,stroke:#f6ad55,stroke-width:3px
     style gh fill:#553c9a,stroke:#9f7aea,stroke-width:2px
     style ctfd fill:#276749,stroke:#48bb78,stroke-width:2px
+    style api fill:#742a2a,stroke:#fc8181,stroke-width:2px
     style cm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
     style pm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
     style mm fill:#1a202c,stroke:#a0aec0,stroke-width:1px
     style hs fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style cc fill:#1a202c,stroke:#a0aec0,stroke-width:1px
+    style cp fill:#1a202c,stroke:#a0aec0,stroke-width:1px
     style at fill:#1a202c,stroke:#a0aec0,stroke-width:1px
 ```
 
