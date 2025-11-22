@@ -547,6 +547,45 @@ If no category is found (empty string for challenge category), the challenge wil
 
 Currently, the difficulty is not uploaded to CTFd, as CTFd does not have a built-in difficulty field for challenges.
 
+Example `mapping-map` ConfigMap:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapping-map
+  namespace: ctfd-manager
+data:
+  categories: | 
+    {
+      "web"        = "Web",
+      "forensics"  = "Forensics",
+      "rev"        = "Reverse Engineering",
+      "crypto"     = "Crypto",
+      "pwn"        = "Pwn",
+      "boot2root"  = "Boot2Root",
+      "osint"      = "OSINT",
+      "misc"       = "Misc",
+      "blockchain" = "Blockchain",
+      "mobile"     = "Mobile"
+    }
+  difficulties: |
+    {
+      "beginner"    = "Beginner",
+      "easy"        = "Easy",
+      "easy-medium" = "Easy - Medium",
+      "medium"      = "Medium",
+      "medium-hard" = "Medium - Hard",
+      "hard"        = "Hard",
+      "very-hard"   = "Very Hard",
+      "insane"      = "Insane"
+    }
+  difficulty-categories: |
+    {
+      "beginner" = "Beginner"
+    }
+```
+
 ### Attaching the manager to an existing CTFd
 
 In order to attach the manager to an existing CTFd instance, you need to provide the manager with a valid CTFd API access token.  
