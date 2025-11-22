@@ -88,7 +88,7 @@ For more information, see the [Docker image package](https://github.com/ctfpilot
 #### Configuration
 
 > [!WARNING]
-> Before configuring, please ensure permissions is created correctly through the service account, and the required ConfigMaps are created. See the [Prerequisites](#prerequisites) section for more information.  
+> Before configuring, please ensure permissions are created correctly through the service account, and the required ConfigMaps are created. See the [Prerequisites](#prerequisites) section for more information.  
 > Failure to setup these elements correctly may lead to the application failing to start or work correctly.
 
 The application needs the following configuration through environment variables:
