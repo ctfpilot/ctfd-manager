@@ -450,7 +450,7 @@ CTFd Manager is not concerned with how the ConfigMaps are managed in Kubernetes,
 The CTFd manager will automatically pick up changes to the ConfigMaps and update CTFd accordingly.
 
 > [!NOTE]
-> Challenge and page ConfigMaps must be located in the `NAMESPACE` that is configured for the manager to work with.
+> Challenge and page ConfigMaps must be located in the `NAMESPACE` that is configured for the service.
 
 #### Required ConfigMap Labels
 
@@ -842,7 +842,7 @@ graph TB
 
 Key points:
 
-1. The manager watches only ConfigMaps in the namespace defined by the `NAMESPACE` environment variable (it may run in a different namespace if RBAC allows cross-namespace access).
+1. The manager watches only ConfigMaps in the namespace defined by the `NAMESPACE` environment variable.
 2. Only large files (handouts) are pulled from GitHub; metadata & schema JSON come from ConfigMaps.
 3. `challenge-configmap-hashset` prevents redundant uploads by tracking last applied hashes.
 4. `mapping-map` dynamically rewrites category/difficulty presentation.
