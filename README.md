@@ -429,7 +429,7 @@ kubectl get svc ctfd-manager -n ctfd-manager
 
 # Setup CTFd (run once)
 curl -X POST -H "Authorization: Bearer <your-password>" \
- -H "Content-Type: application/json" -d @setup-params.json \
+  -H "Content-Type: application/json" -d @setup-params.json \
   http://<manager-endpoint>:8080/api/ctfd/setup
 
 # Upload challenges (run once)
