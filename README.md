@@ -137,256 +137,210 @@ Include the authorization header in your requests:
 Authorization: Bearer <your-password>
 ```
 
-### Endpoints
-
-#### Challenge Management
-
-**GET `/api/challenges`**  
-List all available challenges from Kubernetes ConfigMaps.
+Example curl command:
 
 ```bash
 curl -H "Authorization: Bearer <password>" \
   http://localhost:8080/api/challenges
 ```
 
-Response:
+### Endpoints
 
-```json
-{
-  "challenges": [
-    {"name": "web-challenge-1"},
-    {"name": "crypto-challenge-1"}
-  ]
-}
-```
+#### Challenge Management
 
-**GET `/api/challenges/{id}`**  
-Get detailed configuration for a specific challenge.
+- **GET `/api/challenges`**: List all available challenges from Kubernetes ConfigMaps.
+  Response format:
+  
+  ```json
+  {
+    "challenges": [
+      {"name": "web-challenge-1"},
+      {"name": "crypto-challenge-1"}
+    ]
+  }
+  ```
 
-```bash
-curl -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/challenges/web-challenge-1
-```
-
-**GET `/api/challenges/{id}/files`**  
-List files available for a challenge from the GitHub repository.
-
-```bash
-curl -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/challenges/web-challenge-1/files
-```
-
-**GET `/api/challenges/{id}/files/{file}`**  
-Download a specific file for a challenge.
-
-```bash
-curl -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/challenges/web-challenge-1/files/flag.txt \
-  -O
-```
+- **GET `/api/challenges/{id}`**: Get detailed configuration for a specific challenge.
+- **GET `/api/challenges/{id}/files`**: List files available for a challenge from the GitHub repository.
+- **GET `/api/challenges/{id}/files/{file}`**: Download a specific file for a challenge.
 
 #### CTFd Operations
 
-**POST `/api/ctfd/setup`**  
-Initialize CTFd instance with initial configuration. This should be run once when first setting up CTFd.
+- **POST `/api/ctfd/setup`**: Initialize CTFd instance with initial configuration. This should be run once when first setting up CTFd.
+  
+  ```bash
+  curl -X POST -H "Authorization: Bearer <password>" \
+    -H "Content-Type: application/json" \
+    -d @setup-params.json \
+    http://localhost:8080/api/ctfd/setup
+  ```
 
-```bash
-curl -X POST -H "Authorization: Bearer <password>" \
-  -H "Content-Type: application/json" \
-  -d @setup-params.json \
-  http://localhost:8080/api/ctfd/setup
-```
+  <details>
+  <summary><strong>Setup Parameters</strong> (click to expand)</summary>
 
-<details>
-<summary><strong>Setup Parameters</strong> (click to expand)</summary>
+  The setup endpoint accepts a JSON body with the following parameters:
 
-The setup endpoint accepts a JSON body with the following parameters:
+  ##### Required Parameters
 
-##### Required Parameters
+  | Parameter                 | Type    | Description                                                              | Example                              |
+  | ------------------------- | ------- | ------------------------------------------------------------------------ | ------------------------------------ |
+  | `ctf_name`                | string  | Name of the CTF event                                                    | `"My CTF 2025"`                      |
+  | `ctf_description`         | string  | Description of the CTF                                                   | `"Annual cybersecurity competition"` |
+  | `user_mode`               | string  | Participation mode: `"users"` or `"teams"`                               | `"teams"`                            |
+  | `challenge_visibility`    | string  | Who can view challenges: `"public"`, `"private"`, or `"admins"`          | `"public"`                           |
+  | `account_visibility`      | string  | Who can view accounts: `"public"`, `"private"`, or `"admins"`            | `"public"`                           |
+  | `score_visibility`        | string  | Who can view scores: `"public"`, `"private"`, `"hidden"`, or `"admins"`  | `"public"`                           |
+  | `registration_visibility` | string  | Who can register: `"public"`, `"private"`, or `"mlc"` (MajorLeagueCyber) | `"public"`                           |
+  | `verify_emails`           | boolean | Whether to require email verification                                    | `false`                              |
+  | `ctf_theme`               | string  | Theme name to use                                                        | `"core"`                             |
+  | `name`                    | string  | Admin user's name                                                        | `"Admin User"`                       |
+  | `email`                   | string  | Admin user's email                                                       | `"admin@example.com"`                |
+  | `password`                | string  | Admin user's password                                                    | `"SecurePassword123!"`               |
 
-| Parameter                 | Type    | Description                                                              | Example                              |
-| ------------------------- | ------- | ------------------------------------------------------------------------ | ------------------------------------ |
-| `ctf_name`                | string  | Name of the CTF event                                                    | `"My CTF 2025"`                      |
-| `ctf_description`         | string  | Description of the CTF                                                   | `"Annual cybersecurity competition"` |
-| `user_mode`               | string  | Participation mode: `"users"` or `"teams"`                               | `"teams"`                            |
-| `challenge_visibility`    | string  | Who can view challenges: `"public"`, `"private"`, or `"admins"`          | `"public"`                           |
-| `account_visibility`      | string  | Who can view accounts: `"public"`, `"private"`, or `"admins"`            | `"public"`                           |
-| `score_visibility`        | string  | Who can view scores: `"public"`, `"private"`, `"hidden"`, or `"admins"`  | `"public"`                           |
-| `registration_visibility` | string  | Who can register: `"public"`, `"private"`, or `"mlc"` (MajorLeagueCyber) | `"public"`                           |
-| `verify_emails`           | boolean | Whether to require email verification                                    | `false`                              |
-| `ctf_theme`               | string  | Theme name to use                                                        | `"core"`                             |
-| `name`                    | string  | Admin user's name                                                        | `"Admin User"`                       |
-| `email`                   | string  | Admin user's email                                                       | `"admin@example.com"`                |
-| `password`                | string  | Admin user's password                                                    | `"SecurePassword123!"`               |
+  ##### Optional Time Parameters
 
-##### Optional Time Parameters
+  | Parameter | Type   | Description                     | Example        |
+  | --------- | ------ | ------------------------------- | -------------- |
+  | `start`   | string | CTF start time (Unix timestamp) | `"1700000000"` |
+  | `end`     | string | CTF end time (Unix timestamp)   | `"1700086400"` |
 
-| Parameter | Type   | Description                     | Example        |
-| --------- | ------ | ------------------------------- | -------------- |
-| `start`   | string | CTF start time (Unix timestamp) | `"1700000000"` |
-| `end`     | string | CTF end time (Unix timestamp)   | `"1700086400"` |
+  ##### Optional Team Parameters
 
-##### Optional Team Parameters
+  | Parameter   | Type    | Description                                              | Example |
+  | ----------- | ------- | -------------------------------------------------------- | ------- |
+  | `team_size` | integer | Maximum team size (required if `user_mode` is `"teams"`) | `4`     |
 
-| Parameter   | Type    | Description                                              | Example |
-| ----------- | ------- | -------------------------------------------------------- | ------- |
-| `team_size` | integer | Maximum team size (required if `user_mode` is `"teams"`) | `4`     |
+  ##### Optional Bracket Parameters
 
-##### Optional Bracket Parameters
+  | Parameter  | Type  | Description                         |
+  | ---------- | ----- | ----------------------------------- |
+  | `brackets` | array | List of bracket objects (see below) |
 
-| Parameter  | Type  | Description                         |
-| ---------- | ----- | ----------------------------------- |
-| `brackets` | array | List of bracket objects (see below) |
+  **Bracket Object Structure:**
 
-**Bracket Object Structure:**
+  ```json
+  {
+    "name": "College Students",
+    "description": "For college and university students",
+    "type": "teams"
+  }
+  ```
 
-```json
-{
-  "name": "College Students",
-  "description": "For college and university students",
-  "type": "teams"
-}
-```
+  - `name` (string, required): Bracket name
+  - `description` (string, optional): Bracket description (max 255 chars)
+  - `type` (string, optional): Bracket type - empty string, `"users"`, or `"teams"`
 
-- `name` (string, required): Bracket name
-- `description` (string, optional): Bracket description (max 255 chars)
-- `type` (string, optional): Bracket type - empty string, `"users"`, or `"teams"`
+  ##### Optional Theme Parameters
 
-##### Optional Theme Parameters
+  | Parameter       | Type   | Description            | Example                                         |
+  | --------------- | ------ | ---------------------- | ----------------------------------------------- |
+  | `ctf_logo`      | object | CTF logo file          | `{"name": "logo.png", "content": "<base64>"}`   |
+  | `ctf_banner`    | object | CTF banner image       | `{"name": "banner.jpg", "content": "<base64>"}` |
+  | `ctf_smallicon` | object | CTF small icon/favicon | `{"name": "icon.png", "content": "<base64>"}`   |
+  | `theme_color`   | string | Theme color (hex code) | `"#3b7dd6"`                                     |
 
-| Parameter       | Type   | Description            | Example                                         |
-| --------------- | ------ | ---------------------- | ----------------------------------------------- |
-| `ctf_logo`      | object | CTF logo file          | `{"name": "logo.png", "content": "<base64>"}`   |
-| `ctf_banner`    | object | CTF banner image       | `{"name": "banner.jpg", "content": "<base64>"}` |
-| `ctf_smallicon` | object | CTF small icon/favicon | `{"name": "icon.png", "content": "<base64>"}`   |
-| `theme_color`   | string | Theme color (hex code) | `"#3b7dd6"`                                     |
+  **File Object Structure:**
 
-**File Object Structure:**
+  ```json
+  {
+    "name": "logo.png",
+    "content": "iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+  }
+  ```
 
-```json
-{
-  "name": "logo.png",
-  "content": "iVBORw0KGgoAAAANSUhEUgAAAAUA..."
-}
-```
+  - `name` (string): Filename with extension
+  - `content` (string): Base64-encoded file content
 
-- `name` (string): Filename with extension
-- `content` (string): Base64-encoded file content
+  ##### Optional Mail Server Parameters
 
-##### Optional Mail Server Parameters
+  | Parameter       | Type    | Description                | Example                 |
+  | --------------- | ------- | -------------------------- | ----------------------- |
+  | `mail_server`   | string  | SMTP server address        | `"smtp.gmail.com"`      |
+  | `mail_port`     | integer | SMTP server port (1-65535) | `587`                   |
+  | `mail_username` | string  | SMTP username              | `"noreply@example.com"` |
+  | `mail_password` | string  | SMTP password              | `"smtp-password"`       |
+  | `mail_ssl`      | boolean | Use SSL for SMTP           | `false`                 |
+  | `mail_tls`      | boolean | Use TLS for SMTP           | `true`                  |
+  | `mail_from`     | string  | Sender email address       | `"noreply@example.com"` |
 
-| Parameter       | Type    | Description                | Example                 |
-| --------------- | ------- | -------------------------- | ----------------------- |
-| `mail_server`   | string  | SMTP server address        | `"smtp.gmail.com"`      |
-| `mail_port`     | integer | SMTP server port (1-65535) | `587`                   |
-| `mail_username` | string  | SMTP username              | `"noreply@example.com"` |
-| `mail_password` | string  | SMTP password              | `"smtp-password"`       |
-| `mail_ssl`      | boolean | Use SSL for SMTP           | `false`                 |
-| `mail_tls`      | boolean | Use TLS for SMTP           | `true`                  |
-| `mail_from`     | string  | Sender email address       | `"noreply@example.com"` |
+  ##### Optional Registration Parameters
 
-##### Optional Registration Parameters
+  | Parameter           | Type   | Description                    | Example        |
+  | ------------------- | ------ | ------------------------------ | -------------- |
+  | `registration_code` | string | Code required for registration | `"SECRET2025"` |
 
-| Parameter           | Type   | Description                    | Example        |
-| ------------------- | ------ | ------------------------------ | -------------- |
-| `registration_code` | string | Code required for registration | `"SECRET2025"` |
+  ##### Example Complete Setup Request
 
-##### Example Complete Setup Request
+  ```json
+  {
+    "ctf_name": "My CTF 2025",
+    "ctf_description": "Annual cybersecurity competition",
+    "start": "1700000000",
+    "end": "1700086400",
+    "user_mode": "teams",
+    "challenge_visibility": "public",
+    "account_visibility": "public",
+    "score_visibility": "public",
+    "registration_visibility": "public",
+    "verify_emails": false,
+    "team_size": 4,
+    "brackets": [
+      {
+        "name": "College Students",
+        "description": "For college and university students",
+        "type": "teams"
+      },
+      {
+        "name": "Professionals",
+        "description": "For security professionals",
+        "type": "teams"
+      }
+    ],
+    "ctf_theme": "core",
+    "theme_color": "#3b7dd6",
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "password": "SecurePassword123!",
+    "mail_server": "smtp.gmail.com",
+    "mail_port": 587,
+    "mail_username": "noreply@example.com",
+    "mail_password": "smtp-password",
+    "mail_ssl": false,
+    "mail_tls": true,
+    "mail_from": "noreply@example.com",
+    "registration_code": "SECRET2025"
+  }
+  ```
 
-```json
-{
-  "ctf_name": "My CTF 2025",
-  "ctf_description": "Annual cybersecurity competition",
-  "start": "1700000000",
-  "end": "1700086400",
-  "user_mode": "teams",
-  "challenge_visibility": "public",
-  "account_visibility": "public",
-  "score_visibility": "public",
-  "registration_visibility": "public",
-  "verify_emails": false,
-  "team_size": 4,
-  "brackets": [
-    {
-      "name": "College Students",
-      "description": "For college and university students",
-      "type": "teams"
-    },
-    {
-      "name": "Professionals",
-      "description": "For security professionals",
-      "type": "teams"
-    }
-  ],
-  "ctf_theme": "core",
-  "theme_color": "#3b7dd6",
-  "name": "Admin User",
-  "email": "admin@example.com",
-  "password": "SecurePassword123!",
-  "mail_server": "smtp.gmail.com",
-  "mail_port": 587,
-  "mail_username": "noreply@example.com",
-  "mail_password": "smtp-password",
-  "mail_ssl": false,
-  "mail_tls": true,
-  "mail_from": "noreply@example.com",
-  "registration_code": "SECRET2025"
-}
-```
+  ##### Example Minimal Setup Request
 
-##### Example Minimal Setup Request
+  ```json
+  {
+    "ctf_name": "Quick CTF",
+    "ctf_description": "A simple CTF event",
+    "user_mode": "users",
+    "challenge_visibility": "public",
+    "account_visibility": "public",
+    "score_visibility": "public",
+    "registration_visibility": "public",
+    "verify_emails": false,
+    "ctf_theme": "core",
+    "name": "Admin",
+    "email": "admin@ctf.local",
+    "password": "ChangeMe123!"
+  }
+  ```
 
-```json
-{
-  "ctf_name": "Quick CTF",
-  "ctf_description": "A simple CTF event",
-  "user_mode": "users",
-  "challenge_visibility": "public",
-  "account_visibility": "public",
-  "score_visibility": "public",
-  "registration_visibility": "public",
-  "verify_emails": false,
-  "ctf_theme": "core",
-  "name": "Admin",
-  "email": "admin@ctf.local",
-  "password": "ChangeMe123!"
-}
-```
+  </details>
 
-</details>
-<br />
-
-**POST `/api/ctfd/challenges/init`**  
-Upload all challenges to CTFd. Creates new challenges or updates existing ones.
-
-```bash
-curl -X POST -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/ctfd/challenges/init
-```
-
-**GET `/api/ctfd/challenges`**  
-List all challenges currently in CTFd.
-
-```bash
-curl -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/ctfd/challenges
-```
-
-**GET `/api/ctfd/challenges/uploaded`**  
-List challenges that have been uploaded by the manager with their CTFd IDs.
-
-```bash
-curl -H "Authorization: Bearer <password>" \
-  http://localhost:8080/api/ctfd/challenges/uploaded
-```
+- **POST `/api/ctfd/challenges/init`**: Upload all challenges to CTFd. Creates new challenges or updates existing ones.
+- **GET `/api/ctfd/challenges`**: List all challenges currently in CTFd.
+- **GET `/api/ctfd/challenges/uploaded`**: List challenges that have been uploaded by the manager with their CTFd IDs.
 
 #### System Endpoints
 
-**GET `/api/version`**  
-Get the version information of the manager.
-
-**GET `/api/status`** or **GET `/status`**  
-Health check endpoint. Returns `200 OK` with `{"status":"ok"}` when healthy, or `500` with `{"status":"error"}` when unhealthy.
+- **GET `/api/version`**: Get the version information of the manager.
+- **GET `/api/status`** or **GET `/status`**: Health check endpoint. Returns `200 OK` with `{"status":"ok"}` when healthy, or `500` with `{"status":"error"}` when unhealthy.
 
 ## Operation guide
 
