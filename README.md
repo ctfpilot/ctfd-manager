@@ -366,9 +366,9 @@ kubectl create configmap challenge-configmap-hashset -n ctfd-manager
 
 # Create mapping ConfigMap with category/difficulty mappings
 kubectl create configmap mapping-map -n ctfd-manager \
-  --from-literal=categories='{"web":"Web Challenges","crypto":"Cryptography","pwn":"Binary Exploitation"}' \
-  --from-literal=difficulties='{"easy":"Easy","medium":"Medium","hard":"Hard"}' \
-  --from-literal=difficulty-categories='{"beginner":"Beginner Challenges"}'
+  --from-literal=categories="{\"web\":\"Web Challenges\",\"crypto\":\"Cryptography\",\"pwn\":\"Binary Exploitation\"}" \
+  --from-literal=difficulties="{\"easy\":\"Easy\",\"medium\":\"Medium\",\"hard\":\"Hard\"}" \
+  --from-literal=difficulty-categories="{\"beginner\":\"Beginner Challenges\"}"
 ```
 
 #### 2. Create Service Account and RBAC
