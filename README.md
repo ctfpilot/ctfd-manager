@@ -13,7 +13,7 @@ The tool listens for new content added as ConfigMaps in a designated Kubernetes 
 > The tool has full admin access to the connected CTFd instance, and can modify all content.  
 > Ensure to run the tool in a secure environment, and protect access to the management API.
 >
-> The tool is made to be non-destructive, but retain the needed permissions to change all content.
+> The tool is made to be non-destructive, but retains the needed permissions to change all content.
 
 ## Table of Contents
 
@@ -40,7 +40,7 @@ While the manager may work with earlier and later versions, they are not officia
 
 ## How to run
 
-The following sections describes how to run the CTFd manager application.
+The following sections describe how to run the CTFd manager application.
 
 ### Notes
 
@@ -605,7 +605,7 @@ kubectl patch configmap ctfd-challenges -n <namespace> \
 
 ### Health checks
 
-In order to ensure the application is running correctly, it exposes two health check endpoints, which provides the same information: `status` and `/api/status`.  
+In order to ensure the application is running correctly, it exposes two health check endpoints, which provide the same information: `status` and `/api/status`.  
 They will return 200 OK when the application is running correctly, and 500 Internal Server Error when there is an issue.  
 The return body will contain a JSON object with a `status` field, which will be either `ok` or `error`.
 
