@@ -439,7 +439,7 @@ kubectl create role ctfd-manager -n ctfd-manager \
 # Create role binding
 kubectl create rolebinding ctfd-manager -n ctfd-manager \
   --role=ctfd-manager \
-  --serviceaccount=ctfd:ctfd-manager
+  --serviceaccount=ctfd-manager:ctfd-manager
 ```
 
 #### 3. Create Secrets
@@ -475,6 +475,7 @@ kubectl get svc ctfd-manager -n ctfd-manager
 
 # Setup CTFd (run once)
 curl -X POST -H "Authorization: Bearer <your-password>" \
+ -H "Content-Type: application/json" -d @setup-params.json \
   http://<manager-endpoint>:8080/api/ctfd/setup
 
 # Upload challenges (run once)
@@ -491,7 +492,7 @@ CTFd Manager loads challenge and page definitions from Kubernetes ConfigMaps. Th
 - **Challenges:** [CTF Pilot's Challenge Schema](https://github.com/ctfpilot/challenge-schema) (JSON)
 - **Pages:** [CTF Pilot's Page Schema](https://github.com/ctfpilot/page-schema) (JSON)
 
-CTFd Manager is not concerned with how the ConfigMaps is managed in Kubernetes, as long as they follow the required format.  
+CTFd Manager is not concerned with how the ConfigMaps are managed in Kubernetes, as long as they follow the required format.  
 The CTFd manager will automatically pick up changes to the ConfigMaps and update CTFd accordingly.
 
 > [!NOTE]
@@ -604,9 +605,9 @@ They are added in the format of: `<challenge-or-page-slug>: <ctfd-id>`.
 
 ### Health checks
 
-In order to ensure the application is running correctly, it exposes two health check endpoints, which provides the same information: `status` and  `/api/status`.  
+In order to ensure the application is running correctly, it exposes two health check endpoints, which provides the same information: `status` and `/api/status`.  
 They will return 200 OK when the application is running correctly, and 500 Internal Server Error when there is an issue.  
-The return body will contain a JSON object with a `status` field, which will be either `ok` or `error`, and in case of an error.
+The return body will contain a JSON object with a `status` field, which will be either `ok` or `error`.
 
 Please set up Kubernetes to listen on these endpoints for liveness and readiness probes.
 
