@@ -456,10 +456,10 @@ The CTFd manager will automatically pick up changes to the ConfigMaps and update
 
 #### Required ConfigMap Labels
 
-| Type      | Label Key                          | Label Value        |
-| --------- | ---------------------------------- | ------------------ |
-| Challenge | `challenges.kube-ctf.io/configmap` | `challenge-config` |
-| Page      | `challenges.kube-ctf.io/configmap` | `page-config`      |
+| Type      | Label Key                           | Label Value        |
+| --------- | ----------------------------------- | ------------------ |
+| Challenge | `challenges.ctfpilot.com/configmap` | `challenge-config` |
+| Page      | `challenges.ctfpilot.com/configmap` | `page-config`      |
 
 **These labels are required for the manager to recognize and process the ConfigMap.**
 
@@ -495,7 +495,7 @@ metadata:
   name: web-challenge-1
   namespace: ctfd-manager
   labels:
-    challenges.kube-ctf.io/configmap: challenge-config
+    challenges.ctfpilot.com/configmap: challenge-config
 
 data:
   name: "web-challenge-1"
@@ -516,7 +516,7 @@ metadata:
   name: rules-page
   namespace: ctfd-manager
   labels:
-    challenges.kube-ctf.io/configmap: page-config
+    challenges.ctfpilot.com/configmap: page-config
 
 data:
   slug: "rules"

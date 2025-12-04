@@ -13,7 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/watch"
 )
 
-var watchedConfigMaps = "challenges.kube-ctf.io/configmap"
+var watchedConfigMaps = "challenges.ctfpilot.com/configmap"
 
 func initBackgroundChallengeWatcher() error {
 	log.Println("Initializing background challenge watcher...")
@@ -150,12 +150,12 @@ func getConfigMapType(configMap *corev1.ConfigMap) string {
 	}
 
 	// Log labels for debugging
-	if _, ok := configMap.Labels["challenges.kube-ctf.io/configmap"]; ok {
+	if _, ok := configMap.Labels["challenges.ctfpilot.com/configmap"]; ok {
 		// Print debugging information
-		log.Printf("ConfigMap %s has challenges.kube-ctf.io/configmap label with value: %s\n", configMap.Name, configMap.Labels["challenges.kube-ctf.io/configmap"])
-		if configMap.Labels["challenges.kube-ctf.io/configmap"] == "challenge-config" {
+		log.Printf("ConfigMap %s has challenges.ctfpilot.com/configmap label with value: %s\n", configMap.Name, configMap.Labels["challenges.ctfpilot.com/configmap"])
+		if configMap.Labels["challenges.ctfpilot.com/configmap"] == "challenge-config" {
 			return "challenge"
-		} else if configMap.Labels["challenges.kube-ctf.io/configmap"] == "page-config" {
+		} else if configMap.Labels["challenges.ctfpilot.com/configmap"] == "page-config" {
 			return "page"
 		}
 	}

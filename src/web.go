@@ -13,7 +13,7 @@ import (
 // ---------
 
 type ChallengesResponse struct {
-    Challenges []map[string]string `json:"challenges"`
+	Challenges []map[string]string `json:"challenges"`
 }
 
 // ---------
@@ -55,7 +55,7 @@ func getChallengesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get challenges from the cluster
-	challenges, error := getConfigMapsByLabel(getNamespace(), map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+	challenges, error := getConfigMapsByLabel(getNamespace(), map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 	if error != nil {
 		log.Printf("Error getting challenges: %s\n", error)
@@ -88,7 +88,7 @@ func getChallengeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get challengeConfig from the cluster
-	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 	if error != nil {
 		log.Printf("Error getting challenge: %s\n", error)
@@ -116,7 +116,7 @@ func getChallengeFilesDirContentHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Get challengeConfig from the cluster
-	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 	if error != nil {
 		log.Printf("Error getting challenge: %s\n", error)
@@ -173,7 +173,7 @@ func getChallengeFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get challengeConfig from the cluster
-	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+	challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), id, map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 	if error != nil {
 		log.Printf("Error getting challenge: %s\n", error)
@@ -268,7 +268,7 @@ func postUploadChallengesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get challenges from the cluster
-	challenges, error := getConfigMapsByLabel(getNamespace(), map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+	challenges, error := getConfigMapsByLabel(getNamespace(), map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 	if error != nil {
 		log.Printf("Error getting challenges: %s\n", error)
@@ -278,7 +278,7 @@ func postUploadChallengesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upload each challenge to CTFd
 	for _, config := range challenges {
-		challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), config, map[string]string{"challenges.kube-ctf.io/configmap": "challenge-config"})
+		challengeConfig, error := getChallengeConfigMapByLabel(getNamespace(), config, map[string]string{"challenges.ctfpilot.com/configmap": "challenge-config"})
 
 		if error != nil {
 			log.Printf("Error getting challenge: %s\n", error)
