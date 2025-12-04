@@ -13,7 +13,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -25,7 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -37,7 +37,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 rules:
@@ -53,7 +53,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 roleRef:
@@ -73,7 +73,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 data:
@@ -90,7 +90,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -102,7 +102,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -114,7 +114,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -126,7 +126,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 ---
@@ -138,7 +138,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 data:
@@ -179,7 +179,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 spec:
@@ -192,14 +192,14 @@ spec:
       labels:
         app.kubernetes.io/part-of: ctfpilot
         app.kubernetes.io/name: ctfd-manager
-        app.kubernetes.io/version: 1.0.0
+        app.kubernetes.io/version: 1.0.1-r.1
         app.kubernetes.io/component: ctfd-manager
         ctfpilot.com/component: ctfd-manager
     spec:
       serviceAccountName: ctfd-manager
       containers:
         - name: ctfd-manager
-          image: ghcr.io/ctfpilot/ctfd-manager:1.0.0
+          image: ghcr.io/ctfpilot/ctfd-manager:1.0.1-r.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -241,7 +241,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: ctfpilot
     app.kubernetes.io/name: ctfd-manager
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.0.1-r.1
     app.kubernetes.io/component: ctfd-manager
     ctfpilot.com/component: ctfd-manager
 spec:
