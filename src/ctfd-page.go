@@ -16,7 +16,7 @@ func getCTFdPages() ([]*ctfd.Page, error) {
 		return nil, err
 	}
 
-	pages, err := client.GetPages(&ctfd.GetPagesParams{})
+	pages, _, err := client.GetPages(&ctfd.GetPagesParams{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get CTFd pages: %w", err)
 	}
@@ -118,7 +118,7 @@ func uploadCTFdPage(page *Page, client *ctfd.Client) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to convert page to post params: %w", err)
 	}
-	resp, err := client.PostPages(data)
+	resp, _, err := client.PostPages(data)
 	if err != nil {
 		return 0, fmt.Errorf("failed to upload CTFd page: %w", err)
 	}
@@ -153,7 +153,7 @@ func updateCTFdPage(page *Page, client *ctfd.Client) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to convert page to patch params: %w", err)
 	}
-	resp, err := client.PatchPage(uploadedPageID, data)
+	resp, _, err := client.PatchPage(uploadedPageID, data)
 	if err != nil {
 		return 0, fmt.Errorf("failed to update CTFd page: %w", err)
 	}
@@ -200,7 +200,7 @@ func disableCTFdPage(pageSlug string) error {
 
 	// Patch page to disable it
 	data := &ctfd.PatchPageParams{Hidden: true}
-	_, err = client.PatchPage(uploadedPageID, data)
+	_, _, err = client.PatchPage(uploadedPageID, data)
 	if err != nil {
 		return fmt.Errorf("failed to disable CTFd page: %w", err)
 	}
@@ -230,7 +230,7 @@ func deleteCTFdPage(pageSlug string) error {
 	}
 
 	// Delete page
-	err = client.DeletePage(uploadedPageID)
+	_, err = client.DeletePage(uploadedPageID)
 	if err != nil {
 		return fmt.Errorf("failed to delete CTFd page: %w", err)
 	}
