@@ -37,7 +37,7 @@ func getCTFdChallenges() ([]*ctfd.Challenge, error) {
 
 	// Get challenges
 	view := "admin"
-	challenges, err := client.GetChallenges(&ctfd.GetChallengesParams{
+	challenges, _, err := client.GetChallenges(&ctfd.GetChallengesParams{
 		View: &view,
 	})
 	if err != nil {
@@ -184,7 +184,7 @@ func uploadCTFdChallengeFile(id int, challenge *ChallengeConfig, client *ctfd.Cl
 
 	// Upload files
 	if len(filesContent) != 0 {
-		_, err = client.PostFiles(&ctfd.PostFilesParams{
+		_, _, err = client.PostFiles(&ctfd.PostFilesParams{
 			Files:     filesContent,
 			Challenge: &id,
 		})
@@ -234,6 +234,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 		Decay:          &challenge.Challenge.Decay,
 		Minimum:        &challenge.Challenge.MinPoints,
 		State:          state,
+		Logic:          "any",
 		Type:           challType,
 		ConnectionInfo: &challenge.Challenge.Connection,
 	}
@@ -260,7 +261,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 		}
 
 		chall := &ctfd.Challenge{}
-		if err := client.Post("/challenges", &KubeCTFPostChallengeParams{
+		if _, err := client.Post("/challenges", &KubeCTFPostChallengeParams{
 			PostChallengesParams: params,
 			TemplateName:         kubectfSlug,
 			InstanceType:         instanceType,
@@ -269,7 +270,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 		}
 		uploadedChallenge = chall
 	} else {
-		ch, err := client.PostChallenges(&params)
+		ch, _, err := client.PostChallenges(&params)
 		if err != nil {
 			return 0, err
 		}
@@ -290,7 +291,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 			data = "case_insensitive" // Use case_insensitive if not case sensitive
 		}
 
-		_, err = client.PostFlags(&ctfd.PostFlagsParams{
+		_, _, err = client.PostFlags(&ctfd.PostFlagsParams{
 			Challenge: uploadedChallenge.ID,
 			Content:   flag.Flag,
 			Type:      "static",
@@ -310,7 +311,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 				continue
 			}
 
-			_, err = client.PostTags(&ctfd.PostTagsParams{
+			_, _, err = client.PostTags(&ctfd.PostTagsParams{
 				Challenge: uploadedChallenge.ID,
 				Value:     tag,
 			})
@@ -421,7 +422,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 		}
 
 		chall := &ctfd.Challenge{}
-		if err := client.Patch(fmt.Sprintf("/challenges/%s", uploadedChallengeID), &KubeCTFPatchChallengeParams{
+		if _, err := client.Patch(fmt.Sprintf("/challenges/%s", uploadedChallengeID), &KubeCTFPatchChallengeParams{
 			PatchChallengeParams: params,
 			TemplateName:         kubectfSlug,
 			InstanceType:         instanceType,
@@ -430,7 +431,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 		}
 		uploadedChallenge = chall
 	} else {
-		ch, err := client.PatchChallenge(challengeId, &params)
+		ch, _, err := client.PatchChallenge(challengeId, &params)
 		if err != nil {
 			return 0, err
 		}
@@ -438,7 +439,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	}
 
 	// Get files from CTFd
-	ctfdFiles, err := client.GetChallengeFiles(challengeId)
+	ctfdFiles, _, err := client.GetChallengeFiles(challengeId)
 	if err != nil {
 		log.Printf("Error getting challenge files: %s\n", err)
 		return 0, err
@@ -446,7 +447,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	if ctfdFiles != nil && len(ctfdFiles) > 0 {
 		for _, file := range ctfdFiles {
 			// Delete files
-			err = client.DeleteFile(strconv.Itoa(file.ID))
+			_, err = client.DeleteFile(strconv.Itoa(file.ID))
 			if err != nil {
 				log.Printf("Error deleting file: %s\n", err)
 				return 0, err
@@ -462,7 +463,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	}
 
 	// Get flags from CTFd
-	ctfdFlags, err := client.GetChallengeFlags(challengeId)
+	ctfdFlags, _, err := client.GetChallengeFlags(challengeId)
 	if err != nil {
 		log.Printf("Error getting challenge flags: %s\n", err)
 		return 0, err
@@ -471,7 +472,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	if ctfdFlags != nil && len(ctfdFlags) > 0 {
 		for _, flag := range ctfdFlags {
 			// Delete flags
-			err = client.DeleteFlag(strconv.Itoa(flag.ID))
+			_, err = client.DeleteFlag(strconv.Itoa(flag.ID))
 			if err != nil {
 				log.Printf("Error deleting flag: %s\n", err)
 				return 0, err
@@ -486,7 +487,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 			data = "case_insensitive" // Use case_insensitive if not case sensitive
 		}
 
-		_, err = client.PostFlags(&ctfd.PostFlagsParams{
+		_, _, err = client.PostFlags(&ctfd.PostFlagsParams{
 			Challenge: uploadedChallenge.ID,
 			Content:   flag.Flag,
 			Type:      "static",
@@ -499,7 +500,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	}
 
 	// Remove existing tags
-	tags, err := client.GetTags(&ctfd.GetTagsParams{
+	tags, _, err := client.GetTags(&ctfd.GetTagsParams{
 		ChallengeID: &challengeId,
 	})
 	if err != nil {
@@ -509,7 +510,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 	// Delete existing tags
 	if tags != nil && len(tags) > 0 {
 		for _, tag := range tags {
-			err = client.DeleteTag(strconv.Itoa(tag.ID))
+			_, err = client.DeleteTag(strconv.Itoa(tag.ID))
 			if err != nil {
 				log.Printf("Error deleting tag %s: %s\n", tag.Value, err)
 				return 0, err
@@ -528,7 +529,7 @@ func updateCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 				continue
 			}
 
-			_, err = client.PostTags(&ctfd.PostTagsParams{
+			_, _, err = client.PostTags(&ctfd.PostTagsParams{
 				Challenge: uploadedChallenge.ID,
 				Value:     tag,
 			})
@@ -625,7 +626,7 @@ func disableCTFdChallenge(challenge *ChallengeConfig) error {
 
 	log.Printf("Disabling challenge %s (%d) in CTFd...\n", challenge.Challenge.Slug, uploadedChallengeIDInt)
 	updateChallenge := &ctfd.Challenge{}
-	err = client.Patch(fmt.Sprintf("/challenges/%d", uploadedChallengeIDInt), &params, updateChallenge)
+	_, err = client.Patch(fmt.Sprintf("/challenges/%d", uploadedChallengeIDInt), &params, updateChallenge)
 	if err != nil {
 		log.Printf("Error disabling challenge in CTFd: %s\n", err)
 		return err
