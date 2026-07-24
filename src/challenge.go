@@ -32,6 +32,8 @@ type Challenge struct {
 		Location   string `json:"location"`
 		Identifier any    `json:"identifier"`
 	} `json:"dockerfile_locations,omitempty"`
+	HandoutDir string `json:"handout_dir,omitempty"`
+	Zip        *bool  `json:"zip,omitempty"`
 }
 
 type ChallengeConfig struct {
@@ -60,13 +62,27 @@ func jsonFormatChallengeConfig(challengeConfig *ChallengeConfig) string {
 }
 
 func filesDir(challengeConfig *ChallengeConfig) string {
-	return "k8s/files"
+	if challengeConfig.Challenge.HandoutDir != "" {
+		return challengeConfig.Challenge.HandoutDir
+	}
+	return "handout"
 }
 
 func filesDirPath(challengeConfig *ChallengeConfig) string {
 	// Get the files directory path from the challenge config
 	filesDir := filesDir(challengeConfig)
 	return challengeConfig.Path + "/" + filesDir
+}
+
+func shouldZip(challengeConfig *ChallengeConfig) bool {
+	if challengeConfig.Challenge.Zip == nil {
+		return true
+	}
+	return *challengeConfig.Challenge.Zip
+}
+
+func zipFileName(challengeConfig *ChallengeConfig) string {
+	return challengeConfig.Challenge.Category + "_" + challengeConfig.Challenge.Slug + ".zip"
 }
 
 func getCategoryName(challengeConfig *ChallengeConfig, mappingMap MappingMap) string {

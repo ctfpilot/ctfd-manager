@@ -50,6 +50,44 @@ func getGithubDirContents(repo, branch, path string) ([]*github.RepositoryConten
 	return contents, nil
 }
 
+type RemoteFile struct {
+	// Path is the full path to the file in the repository.
+	Path string
+	// RelPath is the path relative to the root directory that was walked.
+	RelPath string
+}
+func getGithubDirContentsRecursive(repo, branch, path string) ([]RemoteFile, error) {
+	entries, err := getGithubDirContents(repo, branch, path)
+	if err != nil {
+		return nil, err
+	}
+
+	files := make([]RemoteFile, 0)
+	for _, entry := range entries {
+		name := entry.GetName()
+		if name == "" || name == ".gitignore" || name == ".gitkeep" || name == ".git" {
+			continue
+		}
+
+		entryPath := path + "/" + name
+		if entry.GetType() == "dir" {
+			nested, err := getGithubDirContentsRecursive(repo, branch, entryPath)
+			if err != nil {
+				return nil, err
+			}
+			files = append(files, nested...)
+			continue
+		}
+
+		files = append(files, RemoteFile{
+			Path:    entryPath,
+			RelPath: strings.TrimPrefix(entryPath, path+"/"),
+		})
+	}
+
+	return files, nil
+}
+
 func getGithubFileBytes(repo, branch, path string) (*string, error) {
 	owner, repo := splitRepo(repo)
 
