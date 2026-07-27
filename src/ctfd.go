@@ -269,7 +269,7 @@ func setupCTFdBrackets(client *ctfd.Client, params *CTFdSetupParams) error {
 
 	// Set up CTFd brackets
 	for _, bracket := range params.Brackets {
-		if returnedBracket, err := client.PostBrackets(&ctfd.PostBracketsParams{
+		if returnedBracket, _, err := client.PostBrackets(&ctfd.PostBracketsParams{
 			ID:          0,
 			Name:        strings.TrimSpace(bracket.Name),
 			Description: strings.TrimSpace(bracket.Description),
@@ -297,7 +297,7 @@ func setupCTFdMailSettings(client *ctfd.Client, params *CTFdSetupParams) error {
 	userAuth := true
 
 	// Set up CTFd mail settings
-	if err := client.PatchConfigs(&ctfd.PatchConfigsParams{
+	if _, err := client.PatchConfigs(&ctfd.PatchConfigsParams{
 		MailServer:   &params.MailServer,
 		MailPort:     func() *string { port := strconv.Itoa(params.MailPort); return &port }(),
 		MailUseAuth:  &userAuth,
@@ -324,7 +324,7 @@ func setupCTFdRegistrationCode(client *ctfd.Client, params *CTFdSetupParams) err
 	}
 
 	// Set up CTFd registration code
-	if err := client.PatchConfigs(&ctfd.PatchConfigsParams{
+	if _, err := client.PatchConfigs(&ctfd.PatchConfigsParams{
 		RegistrationCode: &params.RegistrationCode,
 	}); err != nil {
 		return errors.New("error setting up CTFd registration code: " + err.Error())
@@ -344,7 +344,7 @@ func setupCTFdAccessToken(client *ctfd.Client, params *CTFdSetupParams) error {
 	}
 
 	// Set up CTFd access token
-	token, err := client.PostTokens(&ctfd.PostTokensParams{
+	token, _, err := client.PostTokens(&ctfd.PostTokensParams{
 		Expiration:  "2222-02-02",
 		Description: "Auto generated access token for CTFd manager",
 	})
@@ -387,7 +387,7 @@ func getCTFdAccessToken() string {
 }
 
 func deleteCTFdPages(client *ctfd.Client) error {
-	pages, err := client.GetPages(&ctfd.GetPagesParams{})
+	pages, _, err := client.GetPages(&ctfd.GetPagesParams{})
 	if err != nil {
 		return errors.New("error getting CTFd pages: " + err.Error())
 	}
@@ -396,7 +396,7 @@ func deleteCTFdPages(client *ctfd.Client) error {
 			continue // Skip if ID is 0
 		}
 		IdStr := strconv.Itoa(page.ID)
-		if err := client.DeletePage(IdStr); err != nil {
+		if _, err := client.DeletePage(IdStr); err != nil {
 			return errors.New("error deleting CTFd page '" + IdStr + "': " + err.Error())
 		}
 		log.Printf("CTFd page '%s' deleted successfully", IdStr)
