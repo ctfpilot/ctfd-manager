@@ -77,3 +77,12 @@ func getCTFdURL() string {
 	}
 	return ctfd_url
 }
+
+func getInstancedChallengeType() string {
+	// Load data from env
+	instanced_challenge_type := strings.TrimSpace(os.Getenv("INSTANCED_CHALLENGE_TYPE"))
+	if instanced_challenge_type == "" {
+		return "kubectf"
+	}
+	return instanced_challenge_type
+}

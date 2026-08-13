@@ -205,7 +205,7 @@ func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, 
 
 	challType := "dynamic"
 	if challenge.Challenge.Type == "instanced" {
-		challType = "kubectf"
+		challType = getInstancedChallengeType()
 	}
 
 	// Cut the first two lines from the description
