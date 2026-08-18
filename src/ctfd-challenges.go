@@ -142,56 +142,73 @@ func deleteUploadedCTFdChallenge(challengeName string) error {
 }
 
 func uploadCTFdChallengeFile(id int, challenge *ChallengeConfig, client *ctfd.Client) (int, error) {
-	// Get files
-	files, err := getGithubDirContents(getGithubRepo(), getGithubBranch(), filesDirPath(challenge))
+	// Get files (recursively, so nested handout subdirectories are included)
+	remoteFiles, err := getGithubDirContentsRecursive(getGithubRepo(), getGithubBranch(), filesDirPath(challenge))
 	if err != nil {
 		log.Printf("Error getting directory contents (err): %s\n", err)
 		return 0, err
 	}
 
 	filesContent := make([]*ctfd.InputFile, 0)
-	if files != nil && len(files) > 0 {
-		for _, file := range files {
-			if file.GetName() == ".gitignore" || file.GetName() == ".gitkeep" {
-				continue
-			}
+	for _, remoteFile := range remoteFiles {
+		data, err := getGithubFileBytes(getGithubRepo(), getGithubBranch(), remoteFile.Path)
+		if err != nil {
+			log.Printf("Error getting file content: %s\n", err)
+			continue
+		}
 
-			// Get file content
-			path := (filesDirPath(challenge) + "/" + file.GetName())
-			data, error := getGithubFileBytes(getGithubRepo(), getGithubBranch(), path)
+		if data == nil {
+			continue
+		}
 
-			if error != nil {
-				log.Printf("Error getting file content: %s\n", error)
-			}
+		filesContent = append(filesContent, &ctfd.InputFile{
+			Name:    remoteFile.RelPath,
+			Content: []byte(*data),
+		})
+	}
 
-			// Convert to format
-			if error == nil && data != nil && file.GetName() != "" {
-				filesContent = append(filesContent, &ctfd.InputFile{
-					Name:    file.GetName(),
-					Content: []byte(*data),
-				})
-			}
+	if len(filesContent) == 0 {
+		return id, nil
+	}
+
+	// Only bundle into a zip when there's more than one file; a single file
+	// is uploaded as-is (whether or not it's already a zip).
+	if len(filesContent) > 1 {
+		entries := make([]ZipEntry, 0, len(filesContent))
+		for _, file := range filesContent {
+			entries = append(entries, ZipEntry{
+				Name:    file.Name,
+				Content: file.Content,
+			})
+		}
+
+		zipped, err := BuildZip(entries, zipRootDir(challenge))
+		if err != nil {
+			log.Printf("Error zipping handout files: %s\n", err)
+			return 0, err
+		}
+		filesContent = []*ctfd.InputFile{
+			{
+				Name:    zipFileName(challenge),
+				Content: zipped,
+			},
 		}
 	}
 
 	// Print files
-	if len(filesContent) > 0 {
-		for _, file := range filesContent {
-			log.Printf("File: %s\n", file.Name)
-			// log.Printf("Content: %s\n", string(file.Content))
-		}
+	for _, file := range filesContent {
+		log.Printf("File: %s\n", file.Name)
+		// log.Printf("Content: %s\n", string(file.Content))
 	}
 
 	// Upload files
-	if len(filesContent) != 0 {
-		_, err = client.PostFiles(&ctfd.PostFilesParams{
-			Files:     filesContent,
-			Challenge: &id,
-		})
-		if err != nil {
-			log.Printf("Error uploading files: %s\n", err)
-			return 0, err
-		}
+	_, err = client.PostFiles(&ctfd.PostFilesParams{
+		Files:     filesContent,
+		Challenge: &id,
+	})
+	if err != nil {
+		log.Printf("Error uploading files: %s\n", err)
+		return 0, err
 	}
 
 	return id, nil
