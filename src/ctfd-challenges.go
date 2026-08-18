@@ -1,8 +1,6 @@
 package main
 
 import (
-	"archive/zip"
-	"bytes"
 	"errors"
 	"fmt"
 	"log"
@@ -173,8 +171,18 @@ func uploadCTFdChallengeFile(id int, challenge *ChallengeConfig, client *ctfd.Cl
 		return id, nil
 	}
 
-	if shouldZip(challenge) {
-		zipped, err := zipInputFiles(filesContent)
+	// Only bundle into a zip when there's more than one file; a single file
+	// is uploaded as-is (whether or not it's already a zip).
+	if len(filesContent) > 1 {
+		entries := make([]ZipEntry, 0, len(filesContent))
+		for _, file := range filesContent {
+			entries = append(entries, ZipEntry{
+				Name:    file.Name,
+				Content: file.Content,
+			})
+		}
+
+		zipped, err := BuildZip(entries, zipRootDir(challenge))
 		if err != nil {
 			log.Printf("Error zipping handout files: %s\n", err)
 			return 0, err
@@ -204,29 +212,6 @@ func uploadCTFdChallengeFile(id int, challenge *ChallengeConfig, client *ctfd.Cl
 	}
 
 	return id, nil
-}
-
-// zipInputFiles builds an in-memory zip archive containing each of the
-// given files at its relative path, preserving directory structure.
-func zipInputFiles(files []*ctfd.InputFile) ([]byte, error) {
-	buf := new(bytes.Buffer)
-	writer := zip.NewWriter(buf)
-
-	for _, file := range files {
-		entry, err := writer.Create(file.Name)
-		if err != nil {
-			return nil, err
-		}
-		if _, err := entry.Write(file.Content); err != nil {
-			return nil, err
-		}
-	}
-
-	if err := writer.Close(); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
 }
 
 func uploadCTFdChallenge(challenge *ChallengeConfig, client *ctfd.Client) (int, error) {
