@@ -1,9 +1,10 @@
 package main
 
 import (
-	"os"
-	"strings"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func getPassword() string {
@@ -85,4 +86,67 @@ func getInstancedChallengeType() string {
 		return "kubectf"
 	}
 	return instanced_challenge_type
+}
+
+func getChallengeDefaultPoints() int {
+	// Load data from env
+	default_points := strings.TrimSpace(os.Getenv("CHALLENGE_DEFAULT_POINTS"))
+	if default_points == "" {
+		return 1000
+	}
+
+	// Convert to int
+	default_points_int, err := strconv.Atoi(default_points)
+	if err != nil {
+		log.Fatal("CHALLENGE_DEFAULT_POINTS environment variable is not a valid integer")
+	}
+
+	// Check if the value is greater than 0
+	if default_points_int <= 0 {
+		log.Fatal("CHALLENGE_DEFAULT_POINTS environment variable must be greater than 0")
+	}
+
+	return default_points_int
+}
+
+func getChallengeDefaultDecay() int {
+	// Load data from env
+	default_decay := strings.TrimSpace(os.Getenv("CHALLENGE_DEFAULT_DECAY"))
+	if default_decay == "" {
+		return 50
+	}
+
+	// Convert to int
+	default_decay_int, err := strconv.Atoi(default_decay)
+	if err != nil {
+		log.Fatal("CHALLENGE_DEFAULT_DECAY environment variable is not a valid integer")
+	}
+
+	// Check if the value is greater than or equal to 0
+	if default_decay_int < 0 {
+		log.Fatal("CHALLENGE_DEFAULT_DECAY environment variable must be greater than or equal to 0")
+	}
+
+	return default_decay_int
+}
+
+func getChallengeDefaultMinPoints() int {
+	// Load data from env
+	default_min_points := strings.TrimSpace(os.Getenv("CHALLENGE_DEFAULT_MIN_POINTS"))
+	if default_min_points == "" {
+		return 100
+	}
+
+	// Convert to int
+	default_min_points_int, err := strconv.Atoi(default_min_points)
+	if err != nil {
+		log.Fatal("CHALLENGE_DEFAULT_MIN_POINTS environment variable is not a valid integer")
+	}
+
+	// Check if the value is greater than or equal to 0
+	if default_min_points_int < 0 {
+		log.Fatal("CHALLENGE_DEFAULT_MIN_POINTS environment variable must be greater than or equal to 0")
+	}
+
+	return default_min_points_int
 }

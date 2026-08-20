@@ -172,6 +172,17 @@ func extractChallengeConfigMap(configMap *corev1.ConfigMap) (*ChallengeConfig, e
 		return nil, err
 	}
 
+	// Set defaults, if not present
+	if challengeConfig.Challenge.Points == 0 {
+		challengeConfig.Challenge.Points = getChallengeDefaultPoints()
+	}
+	if challengeConfig.Challenge.Decay == 0 {
+		challengeConfig.Challenge.Decay = getChallengeDefaultDecay()
+	}
+	if challengeConfig.Challenge.MinPoints == 0 {
+		challengeConfig.Challenge.MinPoints = getChallengeDefaultMinPoints()
+	}
+
 	return challengeConfig, nil
 }
 
